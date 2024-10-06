@@ -5,10 +5,14 @@ import { FaLinkedin } from "react-icons/fa";
 import { CiMenuBurger, CiSearch } from "react-icons/ci";
 import { IoMdMic } from "react-icons/io";
 import { HiDotsVertical } from "react-icons/hi";
+import { BsSendFill } from "react-icons/bs";
+
 
 function Video() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [list, setList] = useState([]);
+  const [comment, setComment] = useState([]);
+
   const [Suggested, setSuggested] = useState([]);
   const { id } = useParams();
   const key = "AIzaSyApvD7xDyMolvwgWNWG_p4GftDa7TzG3nM";
@@ -38,6 +42,25 @@ function Video() {
         setSuggested(json.items);
       });
   }, []);
+
+  useEffect(() => {
+    fetch(
+      `https://youtube.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${id}&key=${key}`
+    )
+      .then((response) => response.json())
+      .then((json) => {
+        console.log(json); 
+          setComment(json.items);
+      })
+
+  }, [id]);
+  
+  
+  
+
+
+
+
 
   return (
     <div>
@@ -175,10 +198,38 @@ function Video() {
                 <p className=" text-2xl font-bold mb-2">
                   {list[0].snippet.title}
                 </p>
+                <div>
+                    <img  src={list[0].snippet.channelThumbnailUrl}  className=" rounded-full" alt="" />
+                    <p> Uploaded By <strong>{list[0].snippet.channelTitle} </strong> </p>
+                </div>
                 <p className=" text-gray-600 text-sm ">
                   {list[0].snippet.description}
                 </p>
-                <p></p>
+                <div className="mt-5">
+                    <hr></hr>
+      <p className="text-xl mt-3 font-semibold">Comments</p>
+      <div className="flex">
+      <input type="text"  
+      placeholder="Add a public comment..."
+      className="w-full border-b-2 border-gray-300 focus:outline-none  p-2" /> <BsSendFill />
+      </div>
+      {comment.length > 0 ? (
+  comment.map((item, index) => (
+    <div key={index} className="my-2">
+      <div className="flex gap-2 items-center">
+        <img src={item.snippet.topLevelComment.snippet.authorProfileImageUrl}  alt="" className=" rounded-full" />
+        <div>
+          <p className="font-bold">{item.snippet.topLevelComment.snippet.authorDisplayName}</p>
+          <p>{item.snippet.topLevelComment.snippet.textDisplay}</p>
+        </div>
+      </div>
+    </div>
+  ))
+) : (
+  <p>No comments available.</p>
+)}
+
+    </div>
               </div>
 
               <div className="flex flex-col w-full lg:w-[30%]">
@@ -188,7 +239,7 @@ function Video() {
                     <button className="text-blue-700 font-semibold hover:underline"> LinkedIn: ha20s</button>
                   </div>
                 </div>
-
+               
                 <p className="text-xl font-semibold">Suggested Videos</p>
                 {Suggested.length !== 0 ? (
                   Suggested.map((video, index) => (
@@ -198,7 +249,7 @@ function Video() {
                           src={video.snippet.thumbnails.default.url}
                           alt=""
                         />
-                        <p>{video.snippet.title}</p>
+                        <p className="text-wrap">{video.snippet.title}</p>
                       </div>
                     </Link>
                   ))

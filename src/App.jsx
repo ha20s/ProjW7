@@ -10,7 +10,7 @@ function App() {
   return (
     <>
     <div className=''>
-      {/* <Nav></Nav> */}
+      <Nav></Nav>
 
    
 
@@ -18,16 +18,12 @@ function App() {
 
     {/* <Login></Login> */}
 
-    <SignIn></SignIn>
+    {/* <SignIn></SignIn> */}
 
     {/* <Video></Video> */}
 
-
-
-
-
-
 </div>
+
     </>
   )
 }
